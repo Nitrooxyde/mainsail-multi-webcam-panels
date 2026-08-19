@@ -213,13 +213,12 @@ If you set up the private channel, follow
 
 Credit where credit is due:
 
-- **Idea, requirements and real-world validation** — [@Nitrooxyde](https://github.com/Nitrooxyde).
-  The need for truly independent webcam panels, the requirement that adding a third or fourth panel
-  must stay a one-minute job, the decision to fork at all, and the validation on a running Voron 2.4
-  are theirs.
-- **Design and implementation** — **Claude Opus 5** (Anthropic), running in
-  [Claude Code](https://claude.com/claude-code): feasibility study, architecture, the patch itself,
-  the build/release pipeline, the screenshots and this documentation.
+- **Idea and request** — [@Nitrooxyde](https://github.com/Nitrooxyde). The idea of truly
+  independent webcam panels, the request to build it, and the validation on a running Voron 2.4 —
+  in their own words, nothing more.
+- **The fork itself** — **Claude Fable 5** (Anthropic), running in
+  [Claude Code](https://claude.com/claude-code): feasibility study, architecture, the patch, the
+  build/update pipeline, the screenshots and this documentation.
 - **Mainsail** — [mainsail-crew](https://github.com/mainsail-crew/mainsail), GPL-3.0. This fork only
   adds ~25 lines on top of their work; everything else that makes Mainsail good is theirs.
 
