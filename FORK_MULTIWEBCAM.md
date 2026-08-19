@@ -168,8 +168,8 @@ readable.
 
 > ⚠️ **Not battle-tested yet.** This fork was cut from **v2.18.2**, which is still the latest upstream
 > release, so the rebase-onto-a-newer-version path has never run for real. Read the script's output
-> rather than firing and forgetting, and please open an issue if something breaks — it will save the
-> next person.
+> rather than firing and forgetting: the script stops on the first failed check, and your Step 0
+> backup puts you back where you were.
 
 Two rules that must never be broken (learned the hard way):
 
@@ -210,9 +210,12 @@ Full diff: [official v2.18.2 → multiwebcam branch](https://github.com/mainsail
 
 ## Disclaimer
 
-- **Unofficial fork.** This project is not affiliated with, endorsed by, or supported by
-  [mainsail-crew](https://github.com/mainsail-crew). Do **not** open issues about this fork on their
-  tracker, and do not ask them to support a printer running it — report here instead.
+- **Unofficial fork, and no support.** This project is not affiliated with, endorsed by, or supported
+  by [mainsail-crew](https://github.com/mainsail-crew). Do **not** open issues about this fork on
+  their tracker, and do not ask them to support a printer running it — their maintainers owe you
+  nothing here. Issues are closed on this repository too: it is published as source to fork and read,
+  not as a supported product. You are on your own — which is exactly why Step 0 (backup) and your own
+  fork matter.
 - **No warranty.** Provided "as is", without warranty of any kind, express or implied, as stated in
   sections 15 and 16 of the [GPL-3.0](LICENSE) this fork inherits. You install and run it on your own
   machine, at your own risk.

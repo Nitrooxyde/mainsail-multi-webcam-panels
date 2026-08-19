@@ -37,10 +37,11 @@
 
 ---
 
-> ⚠️ **Unofficial fork, no warranty.** Not affiliated with or supported by mainsail-crew — please
-> don't take issues about this fork to their tracker. Provided "as is" under
-> [GPL-3.0](LICENSE) (see sections 15–16); you run it on your own printer, at your own risk, and you
-> back up before changing anything. Full terms: [Disclaimer](FORK_MULTIWEBCAM.md#disclaimer).
+> ⚠️ **Unofficial fork, no warranty, no support.** Not affiliated with or supported by mainsail-crew —
+> please don't take issues about this fork to their tracker; issues are closed here as well. Published
+> as source to fork and read. Provided "as is" under [GPL-3.0](LICENSE) (see sections 15–16); you run
+> it on your own printer, at your own risk, and you back up before changing anything. Full terms:
+> [Disclaimer](FORK_MULTIWEBCAM.md#disclaimer).
 
 ---
 
