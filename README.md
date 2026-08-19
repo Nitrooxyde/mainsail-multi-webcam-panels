@@ -28,9 +28,19 @@
   script, change one line in `moonraker.conf`. ~5 minutes, all of it in the
   [guide](FORK_MULTIWEBCAM.md#installation--publish-your-own-fork-5-minutes). Deliberately so: your
   update manager should follow a repo **you** own, not someone else's.
+- **Before anything** — back up `moonraker.conf` and `~/mainsail` on the printer; the guide's
+  [Step 0](FORK_MULTIWEBCAM.md#step-0--back-up-first-do-not-skip) gives the two commands, and makes any
+  problem a two-minute rollback. Never install or update while a print is running.
 - **Updates** — when Mainsail publishes a new version, one command rebases the patch onto it and
   releases it in your fork; you then update from the Mainsail UI as usual. ⚠️ That rebase path has
   **not been exercised against a real new upstream release yet** — v2.18.2 is still the latest one.
+
+---
+
+> ⚠️ **Unofficial fork, no warranty.** Not affiliated with or supported by mainsail-crew — please
+> don't take issues about this fork to their tracker. Provided "as is" under
+> [GPL-3.0](LICENSE) (see sections 15–16); you run it on your own printer, at your own risk, and you
+> back up before changing anything. Full terms: [Disclaimer](FORK_MULTIWEBCAM.md#disclaimer).
 
 ---
 

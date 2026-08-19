@@ -118,4 +118,7 @@ fi
 rm -rf "$WORK"
 echo
 echo "DONE. On the printer: Mainsail > Machine > Update Manager now offers ${TAG}."
+echo "Before updating, back it up (printer must be idle):"
+echo "  cp ~/printer_data/config/moonraker.conf ~/printer_data/config/moonraker.conf.bak_\$(date +%Y%m%d_%H%M%S)"
+echo "  tar czf ~/mainsail-backup-\$(date +%Y%m%d_%H%M%S).tar.gz -C ~ mainsail"
 echo "Update from the UI (printer idle), then reload the page twice (service worker cache)."

@@ -80,6 +80,25 @@ Every webcam panel behaves like any other Mainsail panel:
   nothing is built on the Pi.
 - A printer already running Mainsail through Moonraker's update manager.
 
+### Step 0 — Back up first (do not skip)
+
+Everything below is reversible **only if you have a copy**. On the printer, before touching
+anything:
+
+```bash
+# your Moonraker config, and the Mainsail build currently installed
+cp ~/printer_data/config/moonraker.conf \
+   ~/printer_data/config/moonraker.conf.bak_$(date +%Y%m%d_%H%M%S)
+tar czf ~/mainsail-backup-$(date +%Y%m%d_%H%M%S).tar.gz -C ~ mainsail
+```
+
+Restoring, if anything goes wrong: put the saved `moonraker.conf` back, extract the tarball over
+`~/mainsail`, `sudo systemctl restart moonraker`, reload the browser twice. You are back to exactly
+what you had.
+
+> **Never install or update while a print is running.** Check that the printer is idle first — the
+> update replaces the whole web UI and restarts Moonraker.
+
 ### Step 1 — Fork this repository
 
 Use the **Fork** button (top right). Keep the `multiwebcam` branch — that is where the patch lives.
@@ -142,7 +161,8 @@ catch up with the same single command:
 FORK=you/your-fork ./scripts/update_fork_mainsail.sh v2.18.3
 ```
 
-Then update from the Mainsail UI as in Step 5. If upstream modified one of the 4 patched files, the
+Then update from the Mainsail UI as in Step 5. Back up `~/mainsail` and `moonraker.conf`
+again beforehand — same one-liners as Step 0, same reasons. If upstream modified one of the 4 patched files, the
 rebase stops and tells you exactly where — the patch is ~27 lines, so conflicts stay small and
 readable.
 
@@ -185,6 +205,22 @@ Each panel's camera selection is stored in the Moonraker database
 reloads and updates.
 
 Full diff: [official v2.18.2 → multiwebcam branch](https://github.com/mainsail-crew/mainsail/compare/v2.18.2...Nitrooxyde:mainsail-multi-webcam-panels:multiwebcam)
+
+---
+
+## Disclaimer
+
+- **Unofficial fork.** This project is not affiliated with, endorsed by, or supported by
+  [mainsail-crew](https://github.com/mainsail-crew). Do **not** open issues about this fork on their
+  tracker, and do not ask them to support a printer running it — report here instead.
+- **No warranty.** Provided "as is", without warranty of any kind, express or implied, as stated in
+  sections 15 and 16 of the [GPL-3.0](LICENSE) this fork inherits. You install and run it on your own
+  machine, at your own risk.
+- **Back up before every change** — see [Step 0](#step-0--back-up-first-do-not-skip). A saved
+  `moonraker.conf` and a tarball of `~/mainsail` turn any problem into a two-minute rollback.
+- **Your machine stays yours.** This fork only changes Mainsail's web interface: it never touches
+  `printer.cfg`, kinematics, heaters or any Klipper setting. It remains your responsibility to keep
+  your printer, its configuration and its prints in a safe state — including never updating mid-print.
 
 ---
 
