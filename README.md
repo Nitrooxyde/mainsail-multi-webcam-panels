@@ -24,23 +24,22 @@
   [#758](https://github.com/mainsail-crew/mainsail/issues/758)), never implemented.
 - **What it changes** — 4 files, 27 insertions on top of official Mainsail **v2.18.2**. Nothing else
   is touched; every other Mainsail feature behaves exactly as upstream.
-- **Install** — you publish **your own** fork and point your printer at it: fork this repo, run one
-  script, change one line in `moonraker.conf`. ~5 minutes, all of it in the
-  [guide](FORK_MULTIWEBCAM.md#installation--publish-your-own-fork-5-minutes). Deliberately so: your
-  update manager should follow a repo **you** own, not someone else's.
-- **Before anything** — back up `moonraker.conf` and `~/mainsail` on the printer; the guide's
-  [Step 0](FORK_MULTIWEBCAM.md#step-0--back-up-first-do-not-skip) gives the two commands, and makes any
-  problem a two-minute rollback. Never install or update while a print is running.
-- **Updates** — when Mainsail publishes a new version, one command rebases the patch onto it and
-  releases it in your fork; you then update from the Mainsail UI as usual. ⚠️ That rebase path has
-  **not been exercised against a real new upstream release yet** — v2.18.2 is still the latest one.
+- **Install** — the patch is public; the update channel is **yours and private**: build once with
+  one script, push to your own private repo, point `[update_manager mainsail]` at it with a
+  read-only deploy key. ~15 minutes, fully walked through in the
+  [guide](FORK_MULTIWEBCAM.md#installation--your-own-private-update-channel-15-minutes). Updates can
+  then never erase the panels — your printer only installs what you pushed.
+- **Before anything** — back up `moonraker.conf` and `~/mainsail` on the printer
+  ([Step 0](FORK_MULTIWEBCAM.md#step-0--back-up-first-do-not-skip)). Never update mid-print.
+- **Keeping up with official Mainsail** — when mainsail-crew releases, one command rebases the patch
+  onto the official tag and refreshes your channel; you update from the Mainsail UI as usual. The
+  channel mechanism is exercised for real; the rebase onto a *newer* release is not yet (v2.18.2 is
+  still the latest).
 
 ---
 
-> ⚠️ **The releases here are not a distribution channel.** They exist so that this repository's own
-> author can update their printer without losing the patch — tags get force-moved and releases
-> replaced without notice. Do not point your `[update_manager mainsail]` at this repo; publish
-> [your own fork](FORK_MULTIWEBCAM.md#installation--publish-your-own-fork-5-minutes) instead.
+> ⚠️ **No releases, no binaries, no channel here.** This repository is source + documentation. Your
+> printer updates only from **your own private channel repo** (see the guide) — never from this one.
 >
 > ⚠️ **Unofficial fork, no warranty, no support.** Not affiliated with or supported by mainsail-crew —
 > please don't take issues about this fork to their tracker; issues are closed here as well. Published

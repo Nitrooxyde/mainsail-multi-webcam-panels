@@ -65,126 +65,155 @@ Every webcam panel behaves like any other Mainsail panel:
 
 ---
 
-## Installation — publish your own fork (~5 minutes)
+## Installation — your own private update channel (~15 minutes)
 
-> **This repository is the source of the patch, not a service.** You install it by publishing
-> **your own** copy and pointing your printer at that. This is deliberate: Moonraker's update
-> manager will faithfully install whatever repo you point it at, forever — that repo should be one
-> **you** own, not a stranger's that could go stale, be renamed, or disappear from under your
-> printer. Forking also means you decide *when* to move to a new Mainsail version.
+This project has two halves, and only one of them is public:
+
+- **The patch** (this repository): what gives Mainsail one dashboard panel per webcam. Public,
+  for everyone.
+- **The update channel**: the repo your printer's `[update_manager mainsail]` actually follows, so
+  that Mainsail updates install the patched build instead of erasing it. That one is **yours and
+  private** — nobody else's printer should ever depend on it, and yours should never depend on
+  somebody else's. Moonraker's `git_repo` updater + a read-only deploy key make a private repo work.
+
+> ✅ / ⚠️ **Battle-tested status (2026-08-19):** the channel mechanism itself has been exercised for
+> real — push to the channel → Update Manager sees it → update applied from the UI, verified
+> end-to-end. What has **not** run for real yet is the rebase onto a *newer* official release
+> (v2.18.2 is still the latest). Read the script's output rather than firing and forgetting.
 
 ### What you need
 
-- A GitHub account, with the [`gh`](https://cli.github.com/) CLI authenticated on it.
-- A computer with `git`, `node`/`npm` and `python3` — a PC, a WSL shell, a Mac. **Not the printer**:
-  nothing is built on the Pi.
-- A printer already running Mainsail through Moonraker's update manager.
+- A GitHub account (a free one — private repositories are free).
+- A computer with `git`, `node`/`npm` and `python3` — a PC, a WSL shell, a Mac. **Not the printer.**
+- A printer running Mainsail through Moonraker.
 
 ### Step 0 — Back up first (do not skip)
 
-Everything below is reversible **only if you have a copy**. On the printer, before touching
-anything:
+Everything below is reversible **only if you have a copy**. On the printer:
 
 ```bash
-# your Moonraker config, and the Mainsail build currently installed
 cp ~/printer_data/config/moonraker.conf \
    ~/printer_data/config/moonraker.conf.bak_$(date +%Y%m%d_%H%M%S)
 tar czf ~/mainsail-backup-$(date +%Y%m%d_%H%M%S).tar.gz -C ~ mainsail
 ```
 
-Restoring, if anything goes wrong: put the saved `moonraker.conf` back, extract the tarball over
-`~/mainsail`, `sudo systemctl restart moonraker`, reload the browser twice. You are back to exactly
-what you had.
+Restoring: put the saved `moonraker.conf` back, extract the tarball over `~/mainsail`,
+`sudo systemctl restart moonraker`, reload the browser twice.
 
-> **Never install or update while a print is running.** Check that the printer is idle first — the
-> update replaces the whole web UI and restarts Moonraker.
+> **Never install or update while a print is running.**
 
-### Step 1 — Fork this repository
+### Step 1 — Create your private channel repository
 
-Use the **Fork** button (top right). Keep the `multiwebcam` branch — that is where the patch lives.
+On GitHub: **New repository** → name it e.g. `mainsail-dist` → **Private** → create it empty
+(no README).
 
-### Step 2 — Publish your first release
+### Step 2 — Build the patched Mainsail and push it to your channel
+
+On your computer:
 
 ```bash
-git clone https://github.com/you/your-fork.git
-cd your-fork
-FORK=you/your-fork ./scripts/update_fork_mainsail.sh v2.18.2
+git clone https://github.com/Nitrooxyde/mainsail-multi-webcam-panels.git
+cd mainsail-multi-webcam-panels
+CHANNEL=https://github.com/you/mainsail-dist.git ./scripts/update_channel.sh v2.18.2
 ```
 
-`v2.18.2` is the official Mainsail release the patch gets applied on (the latest one at the time of
-writing — check [upstream releases](https://github.com/mainsail-crew/mainsail/releases)). The script
-rebases the patch onto that release, **stamps your own identity into `release_info.json`**, builds,
-packs `mainsail.zip` and publishes the release in *your* fork. It never touches your printer.
+`v2.18.2` is the official Mainsail release the patch gets applied on — check
+[upstream releases](https://github.com/mainsail-crew/mainsail/releases) for the current one.
+The script rebases the patch onto that release, builds, and pushes the finished build to **your**
+channel repo (branch `main`, tagged). Optionally fork this repository first and set
+`SOURCE=https://github.com/you/your-fork.git` — then you do not even depend on this repo staying up.
 
-### Step 3 — Point your printer at your fork
+### Step 3 — Give your printer read-only access to the channel
 
-On your Klipper machine, edit `~/printer_data/config/moonraker.conf`:
+On the printer (one-time):
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/mainsail_dist_deploy -N "" -C "moonraker-mainsail-dist"
+cat >> ~/.ssh/config <<'EOF'
+
+Host github.com-mainsail-dist
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/mainsail_dist_deploy
+    IdentitiesOnly yes
+EOF
+chmod 600 ~/.ssh/config
+ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
+cat ~/.ssh/mainsail_dist_deploy.pub
+```
+
+Copy the printed public key, then on GitHub: your channel repo → **Settings** → **Deploy keys** →
+**Add deploy key** → paste it, leave **Allow write access unchecked** (read-only). Test from the
+printer: `ssh -T git@github.com-mainsail-dist` should greet you with the repo name.
+
+### Step 4 — Put the channel build in place
+
+On the printer (you made the Step 0 backup, right?):
+
+```bash
+git clone git@github.com-mainsail-dist:you/mainsail-dist.git ~/mainsail.new
+mv ~/mainsail ~/mainsail.old && mv ~/mainsail.new ~/mainsail
+```
+
+### Step 5 — Point Moonraker at the channel
+
+Edit `~/printer_data/config/moonraker.conf` and replace the `[update_manager mainsail]` section:
 
 ```ini
 [update_manager mainsail]
-type: web
-channel: stable
-repo: you/your-fork    # ← instead of mainsail-crew/mainsail
+type: git_repo
 path: ~/mainsail
+origin: git@github.com-mainsail-dist:you/mainsail-dist.git
+primary_branch: main
+is_system_service: False
 ```
 
-### Step 4 — Restart Moonraker (printer idle)
+### Step 6 — Restart and verify
 
 ```bash
 sudo systemctl restart moonraker
 ```
 
-### Step 5 — Update from the Mainsail UI
-
-**Machine** → **Update Manager** card → update "mainsail". From now on, the update manager installs
-your fork instead of stock Mainsail — a stock release can no longer overwrite the patch.
-
-<p align="center">
-  <img src="docs/fork/update-manager.png" width="60%" alt="Update Manager with the fork up to date">
-</p>
-
-Then **reload the page twice** (F5, then F5 again). Mainsail is an offline-capable web app: the first
-reload installs the new version in the background, the second one displays it.
+In Mainsail: **Machine** → **Update Manager** — the "mainsail" entry now reads something like
+`v2.18.2-0` (git describe), valid, clean. Reload the page twice (service worker cache). From now
+on a stock release can never overwrite the panels: your printer only ever installs what **you**
+pushed to **your** channel.
 
 > ⚠️ **Same rule for OrcaSlicer**: Orca's *Device* tab embeds Mainsail with its own cache.
-> After an update, reload it twice (or clear Orca's cache) to see the new version.
+> After an update, reload it twice (or clear Orca's cache).
 
 ---
 
-## Keeping up with upstream Mainsail
+## Keeping up with official Mainsail
 
-Your printer now follows your fork, so a new official Mainsail release does **not** reach it on its
-own — that is exactly what protects the patch. When mainsail-crew publishes, say, `v2.18.3`, you
-catch up with the same single command:
+Your printer follows your channel, so a new official release does **not** reach it on its own —
+that is exactly what protects the panels. When mainsail-crew publishes, say, `v2.18.3`:
 
 ```bash
-FORK=you/your-fork ./scripts/update_fork_mainsail.sh v2.18.3
+CHANNEL=https://github.com/you/mainsail-dist.git ./scripts/update_channel.sh v2.18.3
 ```
 
-Then update from the Mainsail UI as in Step 5. Back up `~/mainsail` and `moonraker.conf`
-again beforehand — same one-liners as Step 0, same reasons. If upstream modified one of the 4 patched files, the
-rebase stops and tells you exactly where — the patch is ~27 lines, so conflicts stay small and
-readable.
+The script fetches the **official** `v2.18.3` tag from `mainsail-crew/mainsail`, replays the
+multiwebcam patch on top of it, rebuilds, and pushes the result to your channel. Then update from
+the Mainsail UI as usual (printer idle, Step 0 backup first, double reload after).
 
-> ⚠️ **Not battle-tested yet.** This fork was cut from **v2.18.2**, which is still the latest upstream
-> release, so the rebase-onto-a-newer-version path has never run for real. Read the script's output
-> rather than firing and forgetting: the script stops on the first failed check, and your Step 0
-> backup puts you back where you were.
-
-Two rules that must never be broken (learned the hard way):
-
-- The GitHub release **title** must be **exactly the tag** (`v2.18.3`): Moonraker reads the remote
-  version from the release *title*, not from the tag. A different title = "update available" shown
-  forever.
-- `release_info.json` must carry the **owner and name of the repo Moonraker points at**. Moonraker
-  compares `repo:` with `<project_owner>/<project_name>` and, on mismatch, raises an anomaly and
-  silently falls back to the repo it detected. The script handles this for you — it is also why you
-  cannot simply point your printer at someone else's fork and expect a clean state.
+If upstream modified one of the 4 patched files, the rebase stops and tells you exactly where —
+the patch is ~27 lines, so conflicts stay small and readable.
 
 ### Going back to stock Mainsail
 
-Put `repo: mainsail-crew/mainsail` back in `moonraker.conf`, restart Moonraker, then update from the
-Update Manager. Nothing else to clean up.
+Restore the stock `[update_manager mainsail]` section in `moonraker.conf`:
+
+```ini
+[update_manager mainsail]
+type: web
+channel: stable
+repo: mainsail-crew/mainsail
+path: ~/mainsail
+```
+
+then `rm -rf ~/mainsail && mkdir ~/mainsail`, restart Moonraker, and update from the Update
+Manager (it reinstalls official Mainsail). Nothing else to clean up.
 
 ---
 
@@ -216,11 +245,10 @@ Full diff: [official v2.18.2 → multiwebcam branch](https://github.com/mainsail
   nothing here. Issues are closed on this repository too: it is published as source to fork and read,
   not as a supported product. You are on your own — which is exactly why Step 0 (backup) and your own
   fork matter.
-- **The releases here are not for you.** This repository publishes releases so that *its author's*
-  printer can update without losing the patch. Tags are force-moved and releases replaced or deleted
-  without notice; nobody answers for a printer that updates from here. Pointing your
-  `[update_manager mainsail]` at this repository is explicitly **not** supported — publish your own
-  fork (5 minutes, [Step 1](#step-1--fork-this-repository)) and point your printer at that.
+- **This repository ships no releases and no binaries.** It is source and documentation. Your
+  printer's updates only ever come from **your own private channel repository** — never from here,
+  never from anyone else's. Pointing `[update_manager mainsail]` at this repository is explicitly
+  **not** supported.
 - **No warranty.** Provided "as is", without warranty of any kind, express or implied, as stated in
   sections 15 and 16 of the [GPL-3.0](LICENSE) this fork inherits. You install and run it on your own
   machine, at your own risk.
