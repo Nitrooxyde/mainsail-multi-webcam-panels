@@ -10,11 +10,11 @@ This feature has been requested upstream since 2023
 [#758](https://github.com/mainsail-crew/mainsail/issues/758)) but was never implemented.
 
 <p align="center">
-  <img src="docs/fork/panel1.png" width="49%" alt="Webcam panel 1 showing its own camera">
+  <img src="docs/fork/panel1.png" width="49%" alt="Webcam panel 1 showing its own source, here an iframe dashboard">
   <img src="docs/fork/panel2.png" width="49%" alt="Webcam panel 2 showing another camera">
 </p>
 
-*(camera streams are blurred in all screenshots — your dashboard will show the live feeds)*
+*(live camera streams are blurred in the screenshots that show them — your dashboard shows the real feeds)*
 
 ---
 
