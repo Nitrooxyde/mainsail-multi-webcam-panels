@@ -77,7 +77,7 @@ Every webcam panel behaves like any other Mainsail panel:
    [update_manager mainsail]
    type: web
    channel: stable
-   repo: Nitrooxyde/mainsail    # ← instead of mainsail-crew/mainsail
+   repo: Nitrooxyde/mainsail-multi-webcam-panels    # ← instead of mainsail-crew/mainsail
    path: ~/mainsail
    ```
 
@@ -146,4 +146,4 @@ Each panel's camera selection is stored in the Moonraker database
 (`gui.view.webcam.currentCam`) under a per-panel key — which is why it survives page
 reloads and updates.
 
-Full diff: [official v2.18.2 → multiwebcam branch](https://github.com/mainsail-crew/mainsail/compare/v2.18.2...Nitrooxyde:mainsail:multiwebcam)
+Full diff: [official v2.18.2 → multiwebcam branch](https://github.com/mainsail-crew/mainsail/compare/v2.18.2...Nitrooxyde:mainsail-multi-webcam-panels:multiwebcam)

@@ -5,7 +5,7 @@
 #
 # Usage    : ./update_fork_mainsail.sh v2.18.3
 # Prérequis: WSL WorkStation, gh authentifié (compte Nitrooxyde), node/npm.
-# Effet    : release https://github.com/Nitrooxyde/mainsail/releases/tag/<tag>
+# Effet    : release https://github.com/Nitrooxyde/mainsail-multi-webcam-panels/releases/tag/<tag>
 #            avec l'asset mainsail.zip. Ensuite l'update se fait DEPUIS L'UI
 #            Mainsail (update manager) — ce script ne touche jamais au Pi.
 #
@@ -19,7 +19,7 @@
 set -euo pipefail
 
 TAG="${1:?usage: $0 <tag upstream, ex: v2.18.3>}"
-FORK="Nitrooxyde/mainsail"
+FORK="Nitrooxyde/mainsail-multi-webcam-panels"
 UPSTREAM="https://github.com/mainsail-crew/mainsail.git"
 WORK="$(mktemp -d /tmp/mainsail-fork-update.XXXXXX)"
 trap 'echo "(workdir conservé pour inspection : $WORK)"' ERR
@@ -46,6 +46,10 @@ grep -q "\"version\":\"${TAG}\"" dist/release_info.json \
     || { echo "ÉCHEC : release_info.json ne porte pas ${TAG}"; exit 1; }
 grep -q '"project_owner":"Nitrooxyde"' dist/release_info.json \
     || { echo "ÉCHEC : project_owner != Nitrooxyde (patch perdu au rebase ?)"; exit 1; }
+# project_name DOIT valoir le nom du repo : Moonraker compare 'repo:' de moonraker.conf avec
+# owner/project_name du release_info.json installé -> mismatch = anomalie + fallback repo détecté.
+grep -q '"project_name":"mainsail-multi-webcam-panels"' dist/release_info.json \
+    || { echo "ÉCHEC : project_name != mainsail-multi-webcam-panels (patch perdu au rebase ?)"; exit 1; }
 
 echo "[5/7] mainsail.zip (python3, zip absent de WSL)"
 python3 - <<'EOF'

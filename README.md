@@ -1,13 +1,41 @@
-> [!NOTE]
-> **This is a fork of Mainsail with independent webcam panels** — one dashboard panel per
-> camera ("Webcam", "Webcam 2", …), scaling automatically with the number of cameras.
-> 📖 **[Read FORK_MULTIWEBCAM.md](FORK_MULTIWEBCAM.md)** for screenshots, what it changes,
-> and the 2-minute install guide.
+<h1 align="center">Mainsail Multi-Webcam Panels</h1>
+
+<p align="center">
+  <b>A <a href="https://github.com/mainsail-crew/mainsail">Mainsail</a> fork for Klipper / Moonraker
+  that gives every webcam its own dashboard panel.</b>
+</p>
+
+<p align="center">
+  "Webcam", "Webcam 2", "Webcam 3"… — one independent panel per camera, each with its own
+  camera selection, its own collapsed state and its own position in the layout. Panels appear
+  automatically as you add cameras in Moonraker: no dropdown, no split view, no configuration.
+</p>
+
+<p align="center">
+  <img src="docs/fork/panel1.png" width="45%" alt="Mainsail dashboard: first webcam panel showing its own Klipper camera">
+  <img src="docs/fork/panel2.png" width="45%" alt="Mainsail dashboard: second independent webcam panel showing another camera">
+</p>
+
+📖 **[FORK_MULTIWEBCAM.md](FORK_MULTIWEBCAM.md) — screenshots, what exactly changes, and the 2-minute install.**
+
+- **Why** — stock Mainsail shows a single webcam panel; several cameras have to share it through a
+  dropdown or a split grid. Requested upstream since 2022
+  ([#1661](https://github.com/mainsail-crew/mainsail/issues/1661),
+  [#758](https://github.com/mainsail-crew/mainsail/issues/758)), never implemented.
+- **What it changes** — 4 files, 27 insertions on top of official Mainsail **v2.18.2**. Nothing else
+  is touched; every other Mainsail feature behaves exactly as upstream.
+- **Install** — point `[update_manager mainsail]` in `moonraker.conf` at
+  `repo: Nitrooxyde/mainsail-multi-webcam-panels`, restart Moonraker, then update from Mainsail's own
+  UI. Because the update manager now tracks this fork, a stock release can no longer overwrite it.
+
+---
+
+<sub>Everything below is the original Mainsail README, from the upstream project by mainsail-crew.</sub>
 
 <p align="center">
   <a>
     <img src="https://raw.githubusercontent.com/mainsail-crew/docs/master/assets/img/logo.png" alt='Mainsail logo' height="152">
-    <h1 align="center">Mainsail</h1>
+    <h2 align="center">Mainsail</h2>
   </a>
 </p>
 <p align="center">
