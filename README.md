@@ -24,14 +24,13 @@
   [#758](https://github.com/mainsail-crew/mainsail/issues/758)), never implemented.
 - **What it changes** — 4 files, 27 insertions on top of official Mainsail **v2.18.2**. Nothing else
   is touched; every other Mainsail feature behaves exactly as upstream.
-- **Install** — point `[update_manager mainsail]` in `moonraker.conf` at
-  `repo: Nitrooxyde/mainsail-multi-webcam-panels`, restart Moonraker, then update from Mainsail's own
-  UI. Because the update manager now tracks this fork, a stock release can no longer overwrite it.
-- **Updates** — new upstream Mainsail versions arrive here once the patch has been rebased onto them
-  and released; you then update from the Mainsail UI as usual. You can also
-  [maintain your own fork](FORK_MULTIWEBCAM.md#if-you-want-to-be-your-own-maintainer) with one
-  command and depend on nobody. ⚠️ That rebase-and-publish flow has **not been exercised against a
-  real new upstream release yet** — v2.18.2 is still the latest one.
+- **Install** — you publish **your own** fork and point your printer at it: fork this repo, run one
+  script, change one line in `moonraker.conf`. ~5 minutes, all of it in the
+  [guide](FORK_MULTIWEBCAM.md#installation--publish-your-own-fork-5-minutes). Deliberately so: your
+  update manager should follow a repo **you** own, not someone else's.
+- **Updates** — when Mainsail publishes a new version, one command rebases the patch onto it and
+  releases it in your fork; you then update from the Mainsail UI as usual. ⚠️ That rebase path has
+  **not been exercised against a real new upstream release yet** — v2.18.2 is still the latest one.
 
 ---
 

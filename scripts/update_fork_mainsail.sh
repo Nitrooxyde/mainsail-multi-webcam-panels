@@ -5,8 +5,8 @@
 #                           that Moonraker's update manager consumes.
 #
 # Usage:
-#   ./scripts/update_fork_mainsail.sh v2.18.3              # maintainer of this fork
-#   FORK=you/your-fork ./scripts/update_fork_mainsail.sh v2.18.3   # your own fork
+#   ./scripts/update_fork_mainsail.sh v2.18.3          # from a clone of your fork
+#   FORK=you/your-fork ./scripts/update_fork_mainsail.sh v2.18.3   # explicit target
 #
 # Requirements: git, node/npm, python3, and an authenticated `gh` CLI
 #               (the account must own $FORK).
@@ -35,7 +35,15 @@
 set -euo pipefail
 
 TAG="${1:?usage: $0 <upstream tag, e.g. v2.18.3>}"
-FORK="${FORK:-Nitrooxyde/mainsail-multi-webcam-panels}"
+# Target repo: taken from $FORK, otherwise deduced from this clone's origin remote.
+# It must be YOUR fork — this is the repo your printer's update manager will follow.
+detect_fork() {
+    local url
+    url="$(git config --get remote.origin.url 2>/dev/null || true)"
+    [[ "$url" =~ github\.com[:/]+([^/]+)/([^/.]+) ]] && printf '%s/%s' "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}"
+}
+FORK="${FORK:-$(detect_fork)}"
+: "${FORK:?cannot determine the fork: run this from a clone of your fork, or set FORK=owner/repo}"
 BRANCH="${BRANCH:-multiwebcam}"
 UPSTREAM="https://github.com/mainsail-crew/mainsail.git"
 OWNER="${FORK%%/*}"

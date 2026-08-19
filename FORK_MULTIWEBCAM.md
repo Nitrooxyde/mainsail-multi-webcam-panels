@@ -65,91 +65,91 @@ Every webcam panel behaves like any other Mainsail panel:
 
 ---
 
-## Installation
+## Installation — publish your own fork (~5 minutes)
 
-> Already running Mainsail? Installing the fork = **one line changed in
-> `moonraker.conf`** + one update from the UI. Nothing else.
+> **This repository is the source of the patch, not a service.** You install it by publishing
+> **your own** copy and pointing your printer at that. This is deliberate: Moonraker's update
+> manager will faithfully install whatever repo you point it at, forever — that repo should be one
+> **you** own, not a stranger's that could go stale, be renamed, or disappear from under your
+> printer. Forking also means you decide *when* to move to a new Mainsail version.
 
-1. On your Klipper machine (Pi), open `~/printer_data/config/moonraker.conf` and find the
-   `[update_manager mainsail]` section. Change the `repo:` line:
+### What you need
 
-   ```ini
-   [update_manager mainsail]
-   type: web
-   channel: stable
-   repo: Nitrooxyde/mainsail-multi-webcam-panels    # ← instead of mainsail-crew/mainsail
-   path: ~/mainsail
-   ```
+- A GitHub account, with the [`gh`](https://cli.github.com/) CLI authenticated on it.
+- A computer with `git`, `node`/`npm` and `python3` — a PC, a WSL shell, a Mac. **Not the printer**:
+  nothing is built on the Pi.
+- A printer already running Mainsail through Moonraker's update manager.
 
-2. Restart Moonraker (printer idle):
+### Step 1 — Fork this repository
 
-   ```bash
-   sudo systemctl restart moonraker
-   ```
+Use the **Fork** button (top right). Keep the `multiwebcam` branch — that is where the patch lives.
 
-3. In Mainsail: **Machine** → **Update Manager** card → update "mainsail".
-   The update manager now downloads this fork — and will keep doing so on every
-   future update (the fork can no longer be overwritten by a stock release).
+### Step 2 — Publish your first release
+
+```bash
+git clone https://github.com/you/your-fork.git
+cd your-fork
+FORK=you/your-fork ./scripts/update_fork_mainsail.sh v2.18.2
+```
+
+`v2.18.2` is the official Mainsail release the patch gets applied on (the latest one at the time of
+writing — check [upstream releases](https://github.com/mainsail-crew/mainsail/releases)). The script
+rebases the patch onto that release, **stamps your own identity into `release_info.json`**, builds,
+packs `mainsail.zip` and publishes the release in *your* fork. It never touches your printer.
+
+### Step 3 — Point your printer at your fork
+
+On your Klipper machine, edit `~/printer_data/config/moonraker.conf`:
+
+```ini
+[update_manager mainsail]
+type: web
+channel: stable
+repo: you/your-fork    # ← instead of mainsail-crew/mainsail
+path: ~/mainsail
+```
+
+### Step 4 — Restart Moonraker (printer idle)
+
+```bash
+sudo systemctl restart moonraker
+```
+
+### Step 5 — Update from the Mainsail UI
+
+**Machine** → **Update Manager** card → update "mainsail". From now on, the update manager installs
+your fork instead of stock Mainsail — a stock release can no longer overwrite the patch.
 
 <p align="center">
   <img src="docs/fork/update-manager.png" width="60%" alt="Update Manager with the fork up to date">
 </p>
 
-4. **Reload the page twice** (F5, then F5 again). Mainsail is an offline-capable web app:
-   the first reload installs the new version in the background, the second one displays it.
+Then **reload the page twice** (F5, then F5 again). Mainsail is an offline-capable web app: the first
+reload installs the new version in the background, the second one displays it.
 
 > ⚠️ **Same rule for OrcaSlicer**: Orca's *Device* tab embeds Mainsail with its own cache.
 > After an update, reload it twice (or clear Orca's cache) to see the new version.
 
-### Going back to stock Mainsail
-
-Put `repo: mainsail-crew/mainsail` back in `moonraker.conf`, restart Moonraker,
-then update from the Update Manager. Nothing else to clean up.
-
 ---
 
-## Staying up to date with upstream Mainsail
+## Keeping up with upstream Mainsail
 
-Your Moonraker now tracks this fork instead of `mainsail-crew/mainsail`. That is precisely what
-stops an official release from overwriting the patch — but it also means a new Mainsail version
-does **not** reach your printer on its own. It reaches you once the patch has been rebased onto
-that release and published as a release here (or in your own fork, see below).
+Your printer now follows your fork, so a new official Mainsail release does **not** reach it on its
+own — that is exactly what protects the patch. When mainsail-crew publishes, say, `v2.18.3`, you
+catch up with the same single command:
 
-> ⚠️ **Not battle-tested yet.** This fork was cut from **v2.18.2**, which is still the latest
-> upstream release, so the rebase-and-publish flow described here has never run against a real
-> new version. Read the script's output rather than firing and forgetting, and please open an
-> issue if something breaks — it will save the next person.
+```bash
+FORK=you/your-fork ./scripts/update_fork_mainsail.sh v2.18.3
+```
 
-### If you just use this fork
+Then update from the Mainsail UI as in Step 5. If upstream modified one of the 4 patched files, the
+rebase stops and tells you exactly where — the patch is ~27 lines, so conflicts stay small and
+readable.
 
-Nothing to do. When a new release is published here, Mainsail's Update Manager offers it like any
-other update: install it with the printer idle, then **reload the page twice** (service worker
-cache). Upstream releases are listed [here](https://github.com/mainsail-crew/mainsail/releases) —
-if this fork ever lags behind one you need, open an issue.
-
-### If you want to be your own maintainer
-
-Nothing in this repository is tied to my account — you can run the whole pipeline yourself and
-never wait on me:
-
-1. **Fork this repository** on GitHub, keeping the `multiwebcam` branch.
-2. Clone your fork on a machine with `git`, `node`/`npm`, `python3` and an authenticated
-   [`gh`](https://cli.github.com/) CLI (the account must own your fork).
-3. Run it against the upstream release you want:
-
-   ```bash
-   FORK=you/your-fork ./scripts/update_fork_mainsail.sh v2.18.3
-   ```
-
-   The script rebases the patch onto the official tag, **rewrites the fork identity inside
-   `release_info.json` to your own owner/repo**, builds, packs `mainsail.zip`, and publishes the
-   release with its title equal to the tag. It never touches your printer.
-
-4. Point your printer at your own fork: `repo: you/your-fork` in `[update_manager mainsail]`,
-   restart Moonraker, update from the UI.
-
-If upstream modified one of the 4 patched files, the rebase stops and tells you exactly where —
-the patch is ~27 lines, so conflicts stay small and readable.
+> ⚠️ **Not battle-tested yet.** This fork was cut from **v2.18.2**, which is still the latest upstream
+> release, so the rebase-onto-a-newer-version path has never run for real. Read the script's output
+> rather than firing and forgetting, and please open an issue if something breaks — it will save the
+> next person.
 
 Two rules that must never be broken (learned the hard way):
 
@@ -158,7 +158,13 @@ Two rules that must never be broken (learned the hard way):
   forever.
 - `release_info.json` must carry the **owner and name of the repo Moonraker points at**. Moonraker
   compares `repo:` with `<project_owner>/<project_name>` and, on mismatch, raises an anomaly and
-  silently falls back to the repo it detected — which is why step 3 rewrites that identity for you.
+  silently falls back to the repo it detected. The script handles this for you — it is also why you
+  cannot simply point your printer at someone else's fork and expect a clean state.
+
+### Going back to stock Mainsail
+
+Put `repo: mainsail-crew/mainsail` back in `moonraker.conf`, restart Moonraker, then update from the
+Update Manager. Nothing else to clean up.
 
 ---
 
