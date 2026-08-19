@@ -82,6 +82,11 @@ export const getters: GetterTree<GuiState, RootState> = {
             allPanels = allPanels.filter((name) => name !== 'webcam')
         }
 
+        // fork multiwebcam: one additional independent webcam panel per extra webcam (webcam_2 ... webcam_N)
+        for (let n = 2; n <= webcams.length; n++) {
+            allPanels.push(`webcam_${n}`)
+        }
+
         // remove spoolman panel, if no spoolman component exists in moonraker
         if (!rootState.server?.components.includes('spoolman')) {
             allPanels = allPanels.filter((name) => name !== 'spoolman')

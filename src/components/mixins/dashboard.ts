@@ -30,6 +30,10 @@ export default class DashboardMixin extends BaseMixin {
     }
 
     getPanelName(name: string) {
+        if (name.startsWith('webcam_')) {
+            return `${this.$t('Panels.WebcamPanel.Headline')} ${name.split('_')[1] ?? ''}`
+        }
+
         if (name.startsWith('macrogroup_')) {
             const groupId = name.split('_')[1] ?? ''
             const group = this.macrogroups.find((group: GuiMacrosStateMacrogroup) => group.id === groupId)
@@ -50,6 +54,7 @@ export default class DashboardMixin extends BaseMixin {
     }
 
     convertPanelnameToIcon(name: string): string {
+        if (name.startsWith('webcam_')) return mdiWebcam
         if (name.startsWith('macrogroup_')) return mdiCodeTags
 
         switch (name) {

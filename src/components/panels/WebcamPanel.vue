@@ -4,9 +4,9 @@
     <panel
         v-if="socketIsConnected"
         :icon="mdiWebcam"
-        :title="$t('Panels.WebcamPanel.Headline')"
+        :title="panelTitle"
         :collapsible="$route.fullPath !== '/cam'"
-        card-class="webcam-panel"
+        :card-class="panelId ? `webcam-panel webcam-panel-${panelId}` : 'webcam-panel'"
         :margin-bottom="currentPage !== 'page'">
         <template #buttons>
             <v-menu v-if="showSwitch" :offset-y="true">
@@ -68,10 +68,22 @@ import WebcamMixin from '@/components/mixins/webcam'
 })
 export default class WebcamPanel extends Mixins(BaseMixin, WebcamMixin) {
     @Prop({ default: 'dashboard' }) declare currentPage?: string
+    // fork multiwebcam: set for the additional instances (webcam_2 ... webcam_N), null for the original panel
+    @Prop({ default: null }) declare panelId: string | null
 
     mdiWebcam = mdiWebcam
     mdiMenuDown = mdiMenuDown
     mdiViewGrid = mdiViewGrid
+
+    get panelTitle(): string {
+        const base = this.$t('Panels.WebcamPanel.Headline').toString()
+        return this.panelId ? `${base} ${this.panelId}` : base
+    }
+
+    get camSettingKey(): string {
+        const page = this.currentPage ?? ''
+        return this.panelId ? `${page}_webcam${this.panelId}` : page
+    }
 
     get webcams(): GuiWebcamStateWebcam[] {
         return this.$store.getters['gui/webcams/getWebcams']
@@ -85,7 +97,7 @@ export default class WebcamPanel extends Mixins(BaseMixin, WebcamMixin) {
     get currentCamId(): string {
         if (this.webcams.length === 1) return this.webcams[0].name ?? 'all'
 
-        const currentCamId = this.$store.state.gui.view.webcam.currentCam[this.currentPage ?? ''] ?? 'all'
+        const currentCamId = this.$store.state.gui.view.webcam.currentCam[this.camSettingKey] ?? 'all'
         if (this.webcams.findIndex((webcam: GuiWebcamStateWebcam) => webcam.name === currentCamId) !== -1)
             return currentCamId
         else if (currentCamId !== undefined && this.webcams.length === 1) return this.webcams[0].name ?? ''
@@ -93,7 +105,7 @@ export default class WebcamPanel extends Mixins(BaseMixin, WebcamMixin) {
     }
 
     set currentCamId(newVal: string) {
-        this.$store.dispatch('gui/setCurrentWebcam', { page: this.currentPage, value: newVal })
+        this.$store.dispatch('gui/setCurrentWebcam', { page: this.camSettingKey, value: newVal })
     }
 
     get currentCam(): GuiWebcamStateWebcam {
