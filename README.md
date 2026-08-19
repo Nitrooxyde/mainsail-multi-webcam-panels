@@ -22,7 +22,7 @@
   dropdown or a split grid. Requested upstream since 2022
   ([#1661](https://github.com/mainsail-crew/mainsail/issues/1661),
   [#758](https://github.com/mainsail-crew/mainsail/issues/758)), never implemented.
-- **What it changes** — 4 files, 27 insertions on top of official Mainsail **v2.18.2**. Nothing else
+- **What it changes** — 3 files, ~25 insertions on top of official Mainsail **v2.18.2**. Nothing else
   is touched; every other Mainsail feature behaves exactly as upstream.
 - **Install** — the patch is public; the update channel is **yours and private**: build once with
   one script, push to your own private repo, point `[update_manager mainsail]` at it with a

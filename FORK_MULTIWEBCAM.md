@@ -198,7 +198,7 @@ multiwebcam patch on top of it, rebuilds, and pushes the result to your channel.
 the Mainsail UI as usual (printer idle, Step 0 backup first, double reload after).
 
 If upstream modified one of the 4 patched files, the rebase stops and tells you exactly where —
-the patch is ~27 lines, so conflicts stay small and readable.
+the patch is ~25 lines, so conflicts stay small and readable.
 
 ### Going back to stock Mainsail
 
@@ -219,7 +219,7 @@ Manager (it reinstalls official Mainsail). Nothing else to clean up.
 
 ## Under the hood (for the curious)
 
-The patch is **tiny — 4 files, ~27 lines** — because it reuses a mechanism Mainsail
+The patch is **tiny — 3 files, ~25 lines** — because it reuses a mechanism Mainsail
 already ships: the multi-instance macro-group panels (`macrogroup_<id>`).
 
 | File | Role |
@@ -227,7 +227,6 @@ already ships: the multi-instance macro-group panels (`macrogroup_<id>`).
 | `src/store/gui/getters.ts` | declares the `webcam_2`…`webcam_N` panels (N = number of cameras) |
 | `src/components/panels/WebcamPanel.vue` | `panelId` prop: "Webcam N" title, camera selection and collapse state stored **per panel** |
 | `src/components/mixins/dashboard.ts` | panel name and icon in the layout editor |
-| `src/plugins/build-release_info.ts` | fork identity in `release_info.json` (for the update manager) |
 
 Each panel's camera selection is stored in the Moonraker database
 (`gui.view.webcam.currentCam`) under a per-panel key — which is why it survives page

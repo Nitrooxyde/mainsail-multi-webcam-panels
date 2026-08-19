@@ -43,7 +43,7 @@ git fetch -q upstream "refs/tags/${TAG}:refs/tags/upstream-${TAG}" --no-tags
 echo "[3/6] Rebasing the multiwebcam patch onto $TAG"
 if ! git rebase "upstream-${TAG}"; then
     echo "REBASE FAILED — resolve the conflict in $WORK/src, then run steps 4-6 by hand."
-    echo "(the patch touches 4 files, ~27 lines; conflicts stay small and readable)"
+    echo "(the patch touches 3 files, ~25 lines; conflicts stay small and readable)"
     exit 1
 fi
 
