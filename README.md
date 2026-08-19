@@ -1,3 +1,9 @@
+> [!NOTE]
+> **This is a fork of Mainsail with independent webcam panels** — one dashboard panel per
+> camera ("Webcam", "Webcam 2", …), scaling automatically with the number of cameras.
+> 📖 **[Read FORK_MULTIWEBCAM.md](FORK_MULTIWEBCAM.md)** for screenshots, what it changes,
+> and the 2-minute install guide.
+
 <p align="center">
   <a>
     <img src="https://raw.githubusercontent.com/mainsail-crew/docs/master/assets/img/logo.png" alt='Mainsail logo' height="152">
