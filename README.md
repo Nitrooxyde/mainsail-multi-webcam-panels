@@ -37,6 +37,11 @@
 
 ---
 
+> ⚠️ **The releases here are not a distribution channel.** They exist so that this repository's own
+> author can update their printer without losing the patch — tags get force-moved and releases
+> replaced without notice. Do not point your `[update_manager mainsail]` at this repo; publish
+> [your own fork](FORK_MULTIWEBCAM.md#installation--publish-your-own-fork-5-minutes) instead.
+>
 > ⚠️ **Unofficial fork, no warranty, no support.** Not affiliated with or supported by mainsail-crew —
 > please don't take issues about this fork to their tracker; issues are closed here as well. Published
 > as source to fork and read. Provided "as is" under [GPL-3.0](LICENSE) (see sections 15–16); you run

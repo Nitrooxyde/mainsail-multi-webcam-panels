@@ -216,6 +216,11 @@ Full diff: [official v2.18.2 → multiwebcam branch](https://github.com/mainsail
   nothing here. Issues are closed on this repository too: it is published as source to fork and read,
   not as a supported product. You are on your own — which is exactly why Step 0 (backup) and your own
   fork matter.
+- **The releases here are not for you.** This repository publishes releases so that *its author's*
+  printer can update without losing the patch. Tags are force-moved and releases replaced or deleted
+  without notice; nobody answers for a printer that updates from here. Pointing your
+  `[update_manager mainsail]` at this repository is explicitly **not** supported — publish your own
+  fork (5 minutes, [Step 1](#step-1--fork-this-repository)) and point your printer at that.
 - **No warranty.** Provided "as is", without warranty of any kind, express or implied, as stated in
   sections 15 and 16 of the [GPL-3.0](LICENSE) this fork inherits. You install and run it on your own
   machine, at your own risk.
